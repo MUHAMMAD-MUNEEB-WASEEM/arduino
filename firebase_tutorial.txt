@@ -1,0 +1,3 @@
+https://randomnerdtutorials.com/esp8266-nodemcu-firebase-realtime-database/
+
+https://github.com/Chensokheng/crud-todo-app/blob/master/src/components/TodoList.js
