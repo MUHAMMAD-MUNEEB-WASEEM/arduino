@@ -71,7 +71,7 @@ void setup() {
 void loop() {
   if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0)) {
     sendDataPrevMillis = millis();
-    if (Firebase.RTDB.getInt(&fbdo, "/test/int")) {
+    if (Firebase.RTDB.getInt(&fbdo, "/test/current/int")) {
       if (fbdo.dataType() == "int") {
         intValue = fbdo.intData();
         Serial.println(intValue);
@@ -81,8 +81,8 @@ void loop() {
       Serial.println(fbdo.errorReason());
     }
     
-    if (Firebase.RTDB.getFloat(&fbdo, "/test/float")) {
-      if (fbdo.dataType() == "float") {
+    if (Firebase.RTDB.getFloat(&fbdo, "/test/current/float")) {
+      if (fbdo.dataType() == "int") {
         floatValue = fbdo.floatData();
         Serial.println(floatValue);
       }

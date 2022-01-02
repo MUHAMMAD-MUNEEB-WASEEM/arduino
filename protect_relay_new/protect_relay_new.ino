@@ -5,8 +5,8 @@ void setup()
 {
 Serial.begin(9600);
 
-emon1.voltage(1, 5, -1.2); // 2 -Voltage: input pin, calibration, phase_shift
-emon1.current(2, 11); // Current: input pin, calibration.
+emon1.voltage(1, 835, -1.4); // 2 -Voltage: input pin, calibration, phase_shift
+emon1.current(2, 9); // Current: input pin, calibration.
 }
 
 void loop()
