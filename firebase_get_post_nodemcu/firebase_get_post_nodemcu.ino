@@ -116,26 +116,36 @@ void loop() {
 
   //After apply particular conditions on variables which we got, now its time to post to react app via firebase
 
-  if (Firebase.RTDB.setInt(&fbdo, "test/current/int", intValue + 5)){
-      Serial.println("PASSED");
-      Serial.println("PATH: " + fbdo.dataPath());
-      Serial.println("TYPE: " + fbdo.dataType());
-    }
-    else {
-      Serial.println("FAILED");
-      Serial.println("REASON: " + fbdo.errorReason());
-    }
-//    count++;
-    
-    // Write an Float number on the database path test/float
-    if (Firebase.RTDB.setFloat(&fbdo, "test/current/float",floatValue + 5)){
-      Serial.println("PASSED");
-      Serial.println("PATH: " + fbdo.dataPath());
-      Serial.println("TYPE: " + fbdo.dataType());
-    }
-    else {
-      Serial.println("FAILED");
-      Serial.println("REASON: " + fbdo.errorReason());
-    }
+//  if (Firebase.RTDB.setInt(&fbdo, "test/current/int", intValue + 5)){
+//      Serial.println("PASSED");
+//      Serial.println("PATH: " + fbdo.dataPath());
+//      Serial.println("TYPE: " + fbdo.dataType());
+//    }
+//    else {
+//      Serial.println("FAILED");
+//      Serial.println("REASON: " + fbdo.errorReason());
+//    }
+////    count++;
+//    
+//    // Write an Float number on the database path test/float
+//    if (Firebase.RTDB.setFloat(&fbdo, "test/current/float",floatValue + 5)){
+//      Serial.println("PASSED");
+//      Serial.println("PATH: " + fbdo.dataPath());
+//      Serial.println("TYPE: " + fbdo.dataType());
+//    }
+//    else {
+//      Serial.println("FAILED");
+//      Serial.println("REASON: " + fbdo.errorReason());
+//    }
+
+    if (Firebase.RTDB.setString(&fbdo, "test/current/str", "SLG FAULT DETECTED")){
+        Serial.println("PASSED");
+        Serial.println("PATH: " + fbdo.dataPath());
+        Serial.println("TYPE: " + fbdo.dataType());
+      }
+      else {
+        Serial.println("FAILED");
+        Serial.println("REASON: " + fbdo.errorReason());
+      }
   }
 }
