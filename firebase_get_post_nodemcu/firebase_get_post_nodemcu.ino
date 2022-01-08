@@ -101,6 +101,9 @@ void setup() {
 }
 
 void loop() {
+
+  
+  
   if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0)) {
     sendDataPrevMillis = millis();
 
@@ -111,6 +114,7 @@ void loop() {
 
     //current1 api :  /test/current/current1
     //current2 api :  /test/current/current2
+
         
     if (Firebase.RTDB.getInt(&fbdo, "/test/current/vp1")) {
       if (fbdo.dataType() == "int") {
