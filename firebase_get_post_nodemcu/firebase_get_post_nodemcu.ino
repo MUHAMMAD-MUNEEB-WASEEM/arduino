@@ -236,6 +236,8 @@ void loop() {
     else {
       Serial.println(fbdo.errorReason());
     }
+
+    //                              LOGIC
     
     
     
@@ -347,22 +349,15 @@ void loop() {
     
     int im1=I2.modulus();
     double i1a=I2.phase();
+         
+
+    //difference for double line faults
+    int dlf1=ip1-ip2;
+    int dlf2=ip2-ip3;
+    int dlf3=ip1-ip3;
+
     
-    //Serial.println(Io);
-    //Serial.println(I1);
-    //Serial.println(I2);
-    //
-    //
-    //Serial.println(V2);
-    //Serial.println(I2);
-    Serial.println(imo);
-    Serial.println(vmo);
-    Serial.println(im2);
-    Serial.println(vm2);
-    
-     
-    
-    if (imo==0 && (im1>0) && (im2>0) &&(((vp1==0)&&(vp2==0))||((vp1==0)&&(vp3==0))||((vp3==0)&&(vp2==0)))){
+    if (((dlf1==0)||(dlf2==0)||(dlf3==0)) && (im1>0) && (im2>0) &&(((vp1==0)&&(vp2==0))||((vp1==0)&&(vp3==0))||((vp3==0)&&(vp2==0)))){
       fault = "DOUBLE LINE FAULT DETECTED";
       Serial.println("DOUBLE LINE FAULT DETECTED");
     }
@@ -383,38 +378,9 @@ void loop() {
     }
 
 
-                                 // LOGIC
-  //After getting data, it stores in some variables which in this case are intValue and floatValue
-
-//  floatValueNew = floatValue + 5;
-//  intValueNew = intValue + 5;
-
-
                                  // POST CODE
 
   //After apply particular conditions on variables which we got, now its time to post to react app via firebase
-
-//  if (Firebase.RTDB.setInt(&fbdo, "test/current/int",)){
-//      Serial.println("PASSED");
-//      Serial.println("PATH: " + fbdo.dataPath());
-//      Serial.println("TYPE: " + fbdo.dataType());
-//    }
-//    else {
-//      Serial.println("FAILED");
-//      Serial.println("REASON: " + fbdo.errorReason());
-//    }
-////    count++;
-//    
-//    // Write an Float number on the database path test/float
-//    if (Firebase.RTDB.setFloat(&fbdo, "test/current/float",floatValue + 5)){
-//      Serial.println("PASSED");
-//      Serial.println("PATH: " + fbdo.dataPath());
-//      Serial.println("TYPE: " + fbdo.dataType());
-//    }
-//    else {
-//      Serial.println("FAILED");
-//      Serial.println("REASON: " + fbdo.errorReason());
-//    }
 
     if (Firebase.RTDB.setString(&fbdo, "test/current/str", fault)){
         Serial.println("PASSED");
