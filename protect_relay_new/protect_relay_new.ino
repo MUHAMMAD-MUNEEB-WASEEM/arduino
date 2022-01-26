@@ -7,7 +7,7 @@ void setup()
 Serial.begin(9600);
 
 emon1.voltage(1, 550, -1.4); // 2 -Voltage: input pin, calibration, phase_shift
-emon1.current(2, 9.5); // Current: input pin, calibration.
+emon1.current(2, 9); // Current: input pin, calibration.
 
 //For relay module
  pinMode(6, OUTPUT);// connected to In terminal of relay
@@ -16,7 +16,7 @@ emon1.current(2, 9.5); // Current: input pin, calibration.
 void loop()
 {
 emon1.calcVI(20,2000); // Calculate all. No.of half wavelengths (crossings), time-out
-emon1.serialprint(); // Print out all variables (realpower, apparent power, Vrms, Irms, power factor)
+//emon1.serialprint(); // Print out all variables (realpower, apparent power, Vrms, Irms, power factor)
 
 float realPower = emon1.realPower; //extract Real Power into variable
 float apparentPower = emon1.apparentPower; //extract Apparent Power into variable
