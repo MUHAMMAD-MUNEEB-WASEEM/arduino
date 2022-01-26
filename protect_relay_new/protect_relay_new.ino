@@ -7,7 +7,7 @@ void setup()
 Serial.begin(9600);
 
 emon1.voltage(1, 550, -1.4); // 2 -Voltage: input pin, calibration, phase_shift
-emon1.current(2, 10); // Current: input pin, calibration.
+emon1.current(2, 9.2); // Current: input pin, calibration.
 
 //For relay module
  pinMode(6, OUTPUT);// connected to In terminal of relay
@@ -28,12 +28,12 @@ float current1 = emon1.Irms;
 
 
 if (Irms>15) {
-  digitalWrite(6,LOW);// turn relay OFF
+  digitalWrite(6,HIGH);// turn relay ON 
  delay(3000);// keep it ON for 3 seconds
 }
 
 else{
-  digitalWrite(6, HIGH);// turn relay ON
+  digitalWrite(6, LOW);// turn relay OFF
   }
 
 }
