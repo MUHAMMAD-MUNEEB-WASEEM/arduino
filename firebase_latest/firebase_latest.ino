@@ -1,95 +1,106 @@
-#include <Arduino.h>
-#if defined(ESP32)
-  #include <WiFi.h>
-#elif defined(ESP8266)
-  #include <ESP8266WiFi.h>
-#endif
-#include <Firebase_ESP_Client.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <Arduino_JSON.h>
 
-//Provide the token generation process info.
-#include "addons/TokenHelper.h"
-//Provide the RTDB payload printing info and other helper functions.
-#include "addons/RTDBHelper.h"
+const char* ssid = "REPLACE_WITH_YOUR_SSID";
+const char* password = "REPLACE_WITH_YOUR_PASSWORD";
 
-// Insert your network credentials
-#define WIFI_SSID "PTCL-BB-208"
-#define WIFI_PASSWORD "356E3FB0"
+//Your Domain name with URL path or IP address with path
+//const char* serverName = "http://192.168.1.106:1880/get-sensor";
 
-// Insert Firebase project API Key
-#define API_KEY "AIzaSyDNTtKvrDkdC9uFY1Ipm0wp-NTpy4V3sco"
+// the following variables are unsigned longs because the time, measured in
+// milliseconds, will quickly become a bigger number than can be stored in an int.
+unsigned long lastTime = 0;
+// Timer set to 10 minutes (600000)
+//unsigned long timerDelay = 600000;
+// Set timer to 5 seconds (5000)
+unsigned long timerDelay = 5000;
 
-// Insert RTDB URLefine the RTDB URL */
-#define DATABASE_URL "relay-9e705-default-rtdb.firebaseio.com" 
+String sensorReadings = "{"name":"John", "age":30, "city":"New York"}";
+float sensorReadingsArr[3];
 
-//Define Firebase Data object
-FirebaseData fbdo;
-
-FirebaseAuth auth;
-FirebaseConfig config;
-
-unsigned long sendDataPrevMillis = 0;
-int count = 0;
-bool signupOK = false;
-
-void setup(){
+void setup() {
   Serial.begin(115200);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Connecting to Wi-Fi");
-  while (WiFi.status() != WL_CONNECTED){
+
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting");
+  while(WiFi.status() != WL_CONNECTED) {
+    delay(500);
     Serial.print(".");
-    delay(300);
   }
-  Serial.println();
-  Serial.print("Connected with IP: ");
+  Serial.println("");
+  Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
-  Serial.println();
+ 
+  Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
+}
 
-  /* Assign the api key (required) */
-  config.api_key = API_KEY;
-
-  /* Assign the RTDB URL (required) */
-  config.database_url = DATABASE_URL;
-
-  /* Sign up */
-  if (Firebase.signUp(&config, &auth, "", "")){
-    Serial.println("ok");
-    signupOK = true;
-  }
-  else{
-    Serial.printf("%s\n", config.signer.signupError.message.c_str());
-  }
-
-  /* Assign the callback function for the long running token generation task */
-  config.token_status_callback = tokenStatusCallback; //see addons/TokenHelper.h
+void loop() {
+  // Send an HTTP POST request depending on timerDelay
+  if ((millis() - lastTime) > timerDelay) {
+    //Check WiFi connection status
+    if(WiFi.status()== WL_CONNECTED){
+              
+      Serial.println(sensorReadings);
+      JSONVar myObject = JSON.parse(sensorReadings);
   
-  Firebase.begin(&config, &auth);
-  Firebase.reconnectWiFi(true);
-}
-
-void loop(){
-  if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0)){
-    sendDataPrevMillis = millis();
-    // Write an Int number on the database path test/int
-    if (Firebase.RTDB.setInt(&fbdo, "test/int", count)){
-      Serial.println("PASSED");
-      Serial.println("PATH: " + fbdo.dataPath());
-      Serial.println("TYPE: " + fbdo.dataType());
-    }
-    else {
-      Serial.println("FAILED");
-      Serial.println("REASON: " + fbdo.errorReason());
-    }
-    count++;
+      // JSON.typeof(jsonVar) can be used to get the type of the var
+      if (JSON.typeof(myObject) == "undefined") {
+        Serial.println("Parsing input failed!");
+        return;
+      }
     
-    // Write an Float number on the database path test/float
-    if (Firebase.RTDB.setFloat(&fbdo, "test/float", 0.01 + random(0,100))){
-      Serial.println("PASSED");
-      Serial.println("PATH: " + fbdo.dataPath());
-      Serial.println("TYPE: " + fbdo.dataType());
+      Serial.print("JSON object = ");
+      Serial.println(myObject);
+    
+      // myObject.keys() can be used to get an array of all the keys in the object
+      JSONVar keys = myObject.keys();
+    
+      for (int i = 0; i < keys.length(); i++) {
+        JSONVar value = myObject[keys[i]];
+        Serial.print(keys[i]);
+        Serial.print(" = ");
+        Serial.println(value);
+        sensorReadingsArr[i] = double(value);
+      }
+      Serial.print("1 = ");
+      Serial.println(sensorReadingsArr[0]);
+      Serial.print("2 = ");
+      Serial.println(sensorReadingsArr[1]);
+      Serial.print("3 = ");
+      Serial.println(sensorReadingsArr[2]);
     }
     else {
-      Serial.println("FAILED");
-      Serial.println("REASON: " + fbdo.errorReason());
+      Serial.println("WiFi Disconnected");
     }
+    lastTime = millis();
   }
 }
+
+//String httpGETRequest(const char* serverName) {
+//  WiFiClient client;
+//  HTTPClient http;
+//    
+//  // Your IP address with path or Domain name with URL path 
+//  http.begin(client, serverName);
+//  
+//  // Send HTTP POST request
+//  int httpResponseCode = http.GET();
+//  
+//  String payload = "{}"; 
+//  
+//  if (httpResponseCode>0) {
+//    Serial.print("HTTP Response code: ");
+//    Serial.println(httpResponseCode);
+//    payload = http.getString();
+//  }
+//  else {
+//    Serial.print("Error code: ");
+//    Serial.println(httpResponseCode);
+//  }
+//  // Free resources
+//  http.end();
+//
+//  return payload;
+//}
